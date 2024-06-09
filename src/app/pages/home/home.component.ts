@@ -19,31 +19,34 @@ export class HomeComponent implements OnInit {
   public pieChartColors: any[] = [];
   public pieChartType: ChartType = 'pie';
   public pieChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,  
+    aspectRatio: 1.5,
+    layout: {
+      padding: {
+        top: 20,
+        bottom: 20,
+        left: 20,
+        right: 20
+      }
+    },
     plugins: {
-      legend:false,
+      legend: false,
       outlabels: {
         text: '%l',
         color: 'black',
         backgroundColor: 'transparent',
-        stretch: 50,
+        stretch: 20,
         font: {
           resizable: true,
           minSize: 12,
           maxSize: 18
         }
-      },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem: any, data: any) => {
-            const label = data.labels[tooltipItem.index] as string;
-            const value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-            return `🏅 ${label}: ${value}`;
-          }
-        }
       }
     },
     onClick: this.onChartClick.bind(this)
   };
+
 
   public numberOfCountries: number = 0;
   public numberOfParticipations: number = 0;

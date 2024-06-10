@@ -1,22 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChartOptions, ChartType } from 'chart.js';
-import { Observable, filter, map, of } from 'rxjs';
+import { Observable, Subject, filter, map, of, takeUntil } from 'rxjs';
 import { Olympic } from 'src/app/core/models/Olympic';
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import 'chartjs-plugin-piechart-outlabels';
 import { ChartElement } from 'src/app/core/models/ChartElement';
+import { Participation } from 'src/app/core/models/Participation';
+import { Color } from 'ng2-charts';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy  {
+  private destroy$ = new Subject<void>();
+
   public olympics$: Observable<Olympic[]> = of([]);
+  public isLoading$!: Observable<boolean>;
+  public errorMessage$!: Observable<string | null>;
+
   public pieChartData: number[] = [];
   public pieChartLabels: string[] = [];
-  public pieChartColors: any[] = [];
+  public pieChartColors: Color[] = [];
   public pieChartType: ChartType = 'pie';
   public pieChartOptions: ChartOptions = {
     responsive: true,
@@ -47,17 +54,22 @@ export class HomeComponent implements OnInit {
     onClick: this.onChartClick.bind(this)
   };
 
-
   public numberOfCountries: number = 0;
   public numberOfParticipations: number = 0;
 
-  constructor(private olympicService: OlympicService, private router: Router) {}
 
+  constructor(private olympicService: OlympicService, private router: Router) {
+    this.isLoading$ = this.olympicService.getIsLoading$();
+    this.errorMessage$ = this.olympicService.getErrorMessage$();
+  }
+
+  
   ngOnInit(): void {
     this.olympics$ = this.olympicService.getOlympics();
     this.olympics$.pipe(
       filter(data => data !== null && data !== undefined),
-      map(data => this.transformData(data))
+      map(data => this.transformData(data)),
+      takeUntil(this.destroy$)
     ).subscribe(({ labels, data, colors, numberOfCountries, numberOfParticipations }) => {
       this.pieChartLabels = labels;
       this.pieChartData = data;
@@ -67,18 +79,23 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  private transformData(data: any): { labels: string[], data: number[], colors: string[], numberOfCountries: number, numberOfParticipations: number } {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private transformData(data: Olympic[]): { labels: string[], data: number[], colors: string[], numberOfCountries: number, numberOfParticipations: number } {
     if (!data) {
       return { labels: [], data: [], colors: [], numberOfCountries: 0, numberOfParticipations: 0 };
     }
 
-    const labels = data.map((item: any) => item.country + '🏅');
-    const dataValues = data.map((item: any) =>
-      item.participations.reduce((sum: number, p: any) => sum + p.medalsCount, 0)
+    const labels = data.map((item: Olympic) => item.country + '🏅');
+    const dataValues = data.map((item: Olympic) =>
+      item.participations.reduce((sum: number, p: Participation) => sum + p.medalsCount, 0)
     );
     const colors = ['#793d52', '#89a1db', '#9780a1', '#bfe0f1', '#b8cbe7', '#956065']; 
 
-    const allParticipations = data.flatMap((item: any) => item.participations.map((p: any) => p.year));
+    const allParticipations = data.flatMap((item: Olympic) => item.participations.map((p: Participation) => p.year));
     const uniqueParticipations = new Set(allParticipations);
     const numberOfCountries = data.length;
     const numberOfParticipations = uniqueParticipations.size;

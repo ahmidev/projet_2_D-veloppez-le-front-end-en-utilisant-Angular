@@ -1,4 +1,14 @@
-<div class="container">
+<div *ngIf="(errorMessage$ | async) || (isLoading$ | async)" class="container">
+  <div *ngIf="isLoading$ | async" class="loading">
+    Chargement des données, veuillez patienter...
+  </div>
+
+  <div *ngIf="errorMessage$ | async as errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+</div>
+
+<div *ngIf="!(errorMessage$ | async) && !(isLoading$ | async)" class="container">
   <h1 class="title">Médailles par Pays</h1>
   <div class="stats">
     <div class="stat">
@@ -11,12 +21,14 @@
     </div>
   </div>
   <div class="chart-container">
-    <canvas baseChart
-            [data]="pieChartData"
-            [labels]="pieChartLabels"
-            [chartType]="pieChartType"
-            [colors]="pieChartColors"
-            [options]="pieChartOptions">
+    <canvas
+      baseChart
+      [data]="pieChartData"
+      [labels]="pieChartLabels"
+      [chartType]="pieChartType"
+      [colors]="pieChartColors"
+      [options]="pieChartOptions"
+    >
     </canvas>
   </div>
 </div>

@@ -1,0 +1,31 @@
+<div class="container">
+    <h1 class="title">{{ country }}</h1>
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-title">Nombre de participations</span>
+        <span class="stat-value">{{ numberOfEntries }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-title">Nombre total de médailles</span>
+        <span class="stat-value">{{ totalNumberOfMedals }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-title">Nombre total d'athlètes</span>
+        <span class="stat-value">{{ totalNumberOfAthletes }}</span>
+      </div>
+    </div>
+    <div class="chart-container">
+      <canvas baseChart
+              [datasets]="lineChartData"
+              [labels]="lineChartLabels"
+              [options]="lineChartOptions"
+              [colors]="lineChartColors"
+              [legend]="lineChartLegend"
+              [chartType]="lineChartType">
+      </canvas>
+    </div>
+    <div class="back-button-container">
+      <button (click)="goBack()">Retour</button>
+    </div>
+  </div>
+  

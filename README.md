@@ -1,29 +1,60 @@
-# OlympicGamesStarter
+# Tableau de Bord des Médailles Olympiques
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+Ce projet consiste en une application Angular qui affiche des données sur les médailles olympiques pour différents pays. Il comprend deux composants principaux :
 
-Don't forget to install your node_modules before starting (`npm install`).
+- **HomeComponent** : Affiche un graphique circulaire montrant le nombre total de médailles par pays.
+- **DetailsComponent** : Affiche des informations détaillées sur un pays sélectionné, y compris un graphique en ligne montrant le nombre de médailles gagnées par le pays au fil des ans.
 
-## Development server
+Il suffit de cliquer sur le pays en question pour avoir les détails qui le concernant.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Utilisation
+
+1. Clonez le projet avec `git clone <url_du_projet>`.
+2. Installez les dépendances avec `npm install`.
+3. Lancez le projet avec `ng serve`.
+4. Accédez à l'application à l'adresse `http://localhost:4200/`.
+
+## Explication du Code
+
+### Composants :
+
+#### HomeComponent
+
+**But** : Afficher un graphique circulaire du nombre total de médailles remportées par chaque pays.
+
+**Fonctionnalités clés** :
+- Récupère les données olympiques et initialise le graphique.
+- Affiche le nombre total de pays et le plus grand nombre de participations (Jeux Olympiques) par un pays.
+- Utilise `chartjs-plugin-piechart-outlabels` pour l'étiquetage du graphique circulaire.
+- Gère les événements de clic sur le graphique pour naviguer vers le `DetailsComponent` pour le pays sélectionné.
+
+#### DetailsComponent
+
+**But** : Afficher des informations détaillées sur un pays sélectionné, y compris un graphique en ligne du nombre de médailles au fil des ans.
+
+**Fonctionnalités clés** :
+- Récupère les données olympiques et les filtre en fonction du pays sélectionné.
+- Affiche le nom du pays, le nombre de participations, le nombre total de médailles et le nombre d'athlètes.
+- Initialise un graphique en ligne pour montrer le nombre de médailles gagnées par le pays au fil des ans.
+
+### Fichiers Clés :
+
+- **home.component.ts** : Gère la récupération des données et la configuration du graphique circulaire. Utilise `ViewChild` pour interagir avec les éléments du DOM. S'abonne aux données provenant de `OlympicService` et initialise les données et les options du graphique.
+- **details.component.ts** : Gère la récupération et l'affichage des données pour un pays spécifique. Utilise `ActivatedRoute` pour obtenir les paramètres de la requête et récupérer les données du pays correspondant. Initialise et configure un graphique en ligne pour afficher le nombre de médailles du pays au fil des ans.
+- **olympic.service.ts** : Fournit des méthodes pour récupérer les données olympiques d'une API. Retourne un observable auquel les composants s'abonnent pour recevoir les données.
+
+## Environnement
+
+- **Angular 14** : Le framework principal utilisé pour créer l'application.
+- **Chart.js** : Une bibliothèque utilisée pour créer des graphiques.
+  - `chart.js: ^2.9.4`
+  - `chartjs-plugin-piechart-outlabels: ^0.1.4` : Un plugin pour Chart.js utilisé pour créer des étiquettes sur les graphiques circulaires.
+- **rxjs: ^7.4.0`
+
+## Serveur de Développement
+
+Exécutez `ng serve` pour un serveur de développement. Naviguez à `http://localhost:4200/`. L'application se rechargera automatiquement si vous modifiez un des fichiers source.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Where to start
-
-As you can see, an architecture has already been defined for the project. It is just a suggestion, you can choose to use your own. The predefined architecture includes (in addition to the default angular architecture) the following:
-
-- `components` folder: contains every reusable components
-- `pages` folder: contains components used for routing
-- `core` folder: contains the business logic (`services` and `models` folders)
-
-I suggest you to start by understanding this starter code. Pay an extra attention to the `app-routing.module.ts` and the `olympic.service.ts`.
-
-Once mastered, you should continue by creating the typescript interfaces inside the `models` folder. As you can see I already created two files corresponding to the data included inside the `olympic.json`. With your interfaces, improve the code by replacing every `any` by the corresponding interface.
-
-You're now ready to implement the requested features.
-
-Good luck!
+Exécutez `ng build` pour construire le projet. Les artefacts de construction seront stockés dans le répertoire `dist/`.
